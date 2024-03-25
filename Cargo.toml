@@ -1,0 +1,6 @@
+[workspace]
+members = ["ems_service"]
+resolver = "2"
+
+[workspace.dependencies]
+ems_service = { path = "./ems_service" }

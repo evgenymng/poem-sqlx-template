@@ -1,0 +1,4 @@
+* Add `Dockerfile` and `docker-compose`
+* Write `README.md`
+* Write an example of more complex endpoint
+* Add GitHub `rustfmt` workflow checks
