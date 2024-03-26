@@ -17,7 +17,11 @@ where
     E: for<'r> sqlx::FromRow<'r, PgRow> + Entity + Serialize + Send + Unpin,
 {
     /// Fetch one row from the database using condition: key-value pair.
-    async fn fetch_one<'q, K, V>(&self, key: K, value: V) -> sqlx::Result<Option<E>>
+    async fn fetch_one<'q, K, V>(
+        &self,
+        key: K,
+        value: V,
+    ) -> sqlx::Result<Option<E>>
     where
         K: Display,
         V: 'q + Send + sqlx::Encode<'q, Postgres> + sqlx::Type<Postgres>,
@@ -59,12 +63,18 @@ where
     }
 
     /// Fetch all rows from the database using condition: key-value pair.
-    async fn fetch_many_with_cond<'q, K, V>(&self, key: K, value: V) -> sqlx::Result<Vec<E>>
+    async fn fetch_many_with_cond<'q, K, V>(
+        &self,
+        key: K,
+        value: V,
+    ) -> sqlx::Result<Vec<E>>
     where
         K: Display,
         V: 'q + Send + sqlx::Encode<'q, Postgres> + sqlx::Type<Postgres>,
     {
-        log::debug!("Using `BasicRepostioryExt::fetch_many_with_cond` implementation");
+        log::debug!(
+            "Using `BasicRepostioryExt::fetch_many_with_cond` implementation"
+        );
         let pool = self.get_conn_pool();
 
         let mut builder = sqlx::QueryBuilder::new("SELECT * FROM ");
@@ -82,8 +92,14 @@ where
         rows.try_collect().await
     }
 
-    async fn fetch_many_paginated<'q>(&self, page: i64, size: i64) -> sqlx::Result<Vec<E>> {
-        log::debug!("Using `BasicRepostioryExt::fetch_many_paginated` implementation");
+    async fn fetch_many_paginated<'q>(
+        &self,
+        page: i64,
+        size: i64,
+    ) -> sqlx::Result<Vec<E>> {
+        log::debug!(
+            "Using `BasicRepostioryExt::fetch_many_paginated` implementation"
+        );
         let pool = self.get_conn_pool();
 
         let mut builder = sqlx::QueryBuilder::new("SELECT * FROM ");
@@ -124,11 +140,17 @@ where
 
     /// Insert rows to the database. In an ORM-like manner, takes an
     /// iterable `entities` each representing a new potential row.
-    async fn add(&self, entities: impl IntoIterator<Item = E>) -> sqlx::Result<()> {
+    async fn add(
+        &self,
+        entities: impl IntoIterator<Item = E>,
+    ) -> sqlx::Result<()> {
         log::debug!("Using `BasicRepostioryExt::add` implementation");
         for e in entities {
-            if let serde_json::Value::Object(obj) = serde_json::to_value(e).unwrap() {
-                let mut builder = sqlx::QueryBuilder::<Postgres>::new("INSERT INTO ");
+            if let serde_json::Value::Object(obj) =
+                serde_json::to_value(e).unwrap()
+            {
+                let mut builder =
+                    sqlx::QueryBuilder::<Postgres>::new("INSERT INTO ");
 
                 builder.push(E::table_name());
                 builder.push(" (");
@@ -144,11 +166,14 @@ where
                 builder.push(") ");
 
                 let values = obj.into_iter().map(|(_, v)| v);
-                builder.push_values(vec![values].into_iter(), |mut b, values| {
-                    for value in values {
-                        b.push_bind(value);
-                    }
-                });
+                builder.push_values(
+                    vec![values].into_iter(),
+                    |mut b, values| {
+                        for value in values {
+                            b.push_bind(value);
+                        }
+                    },
+                );
 
                 let query = builder.build();
                 log::debug!("Query built: {}. Executing", query.sql());

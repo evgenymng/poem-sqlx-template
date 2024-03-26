@@ -33,7 +33,11 @@ impl BookRoute {
     }
 
     #[oai(path = "/book", method = "get", tag = ApiTag::Book)]
-    pub async fn get_many(&self, page: Query<i64>, size: Query<i64>) -> Result<Json<Vec<Book>>> {
+    pub async fn get_many(
+        &self,
+        page: Query<i64>,
+        size: Query<i64>,
+    ) -> Result<Json<Vec<Book>>> {
         let objs = self
             .ctx
             .book_repo
@@ -45,7 +49,11 @@ impl BookRoute {
     }
 
     #[oai(path = "/book/:id", method = "put", tag = ApiTag::Book)]
-    pub async fn update(&self, id: Path<Uuid>, upd: Json<BookUpdate>) -> Result<()> {
+    pub async fn update(
+        &self,
+        id: Path<Uuid>,
+        upd: Json<BookUpdate>,
+    ) -> Result<()> {
         self.ctx
             .book_repo
             .update_with_cond(serde_json::to_value(upd.0).unwrap(), "id", id.0)
