@@ -33,7 +33,11 @@ impl AuthorRoute {
     }
 
     #[oai(path = "/author", method = "get", tag = ApiTag::Author)]
-    pub async fn get_many(&self, page: Query<i64>, size: Query<i64>) -> Result<Json<Vec<Author>>> {
+    pub async fn get_many(
+        &self,
+        page: Query<i64>,
+        size: Query<i64>,
+    ) -> Result<Json<Vec<Author>>> {
         let objs = self
             .ctx
             .author_repo
@@ -45,7 +49,11 @@ impl AuthorRoute {
     }
 
     #[oai(path = "/author/:id", method = "put", tag = ApiTag::Author)]
-    pub async fn update(&self, id: Path<Uuid>, upd: Json<AuthorUpdate>) -> Result<()> {
+    pub async fn update(
+        &self,
+        id: Path<Uuid>,
+        upd: Json<AuthorUpdate>,
+    ) -> Result<()> {
         self.ctx
             .author_repo
             .update_with_cond(serde_json::to_value(upd.0).unwrap(), "id", id.0)
