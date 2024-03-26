@@ -1,0 +1,7 @@
+max_width = 80
+newline_style = "Unix"
+normalize_doc_attributes = true
+import_granularity = "Crate"
+overflow_delimited_expr = true
+reorder_impl_items = true
+wrap_comments = true
