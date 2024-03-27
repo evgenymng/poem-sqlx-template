@@ -34,12 +34,12 @@ async fn main() -> anyhow::Result<()> {
         BookRoute { ctx },
     );
 
-    let api_service = OpenApiService::new(routes, "EMS", "1.0.0")
-        .server("http://localhost:3000/api");
-    let ui = api_service.swagger_ui();
-
-    // BUG(vinc3nzo): OpenAPI is aiming for the wrong server (different port)
     let addr = std::env::var("LISTEN_ADDRESS")?;
+    let mut api_endpoint = addr.clone();
+    api_endpoint.push_str("/api");
+    let api_service =
+        OpenApiService::new(routes, "EMS", "1.0.0").server(api_endpoint);
+    let ui = api_service.swagger_ui();
     Server::new(TcpListener::bind(addr))
         .run(Route::new().nest("/api", api_service).nest("/docs", ui))
         .await?;
