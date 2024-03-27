@@ -40,8 +40,6 @@ async fn main() -> anyhow::Result<()> {
 
     // BUG(vinc3nzo): OpenAPI is aiming for the wrong server (different port)
     let addr = std::env::var("LISTEN_ADDRESS")?;
-    Server::new(TcpListener::bind(addr))
-        .run(Route::new().nest("/api", api_service).nest("/docs", ui))
-        .await?;
+    Server::new(TcpListener::bind(addr)).run(Route::new().nest("/api", api_service).nest("/docs", ui)).await?;
     Ok(())
 }
