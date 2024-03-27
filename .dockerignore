@@ -1,0 +1,10 @@
+target/debug/
+.env
+.example.env
+Cargo.lock
+*.swp
+rustfmt.toml
+TODO
+docker-compose*.yml
+Dockerfile
+.gitignore
